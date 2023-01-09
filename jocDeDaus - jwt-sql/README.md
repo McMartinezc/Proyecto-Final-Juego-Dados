@@ -72,10 +72,12 @@ GET /players/ranking/winner
 ## Fases
 FASE 1  
 • **Persistència**: utilitza com a base de dades mysql
+
 FASE 2
-• **Canvia tot el que necessitis i utilitza MongoDB per persistir les dades.
+• Canvia tot el que necessitis i utilitza MongoDB per persistir les dades.
+
 FASE 3
-• **Afegeix seguretat: inclou autenticació per JWT en  tots els accessos a les URL's del microservei.
+• Afegeix seguretat: inclou autenticació per JWT en  tots els accessos a les URL's del microservei.
 
 # Recursos
 
