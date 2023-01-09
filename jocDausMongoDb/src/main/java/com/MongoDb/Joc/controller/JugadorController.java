@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.TreeMap;
 
+import com.MongoDb.Joc.Dto.JugadorDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +24,13 @@ import com.MongoDb.Joc.service.JugadorService;
 public class JugadorController {
 
 	@Autowired
-	private JugadorService service;
+	private JugadorService jugadorService;
 
 	//Mostra tots els jugadors
 	@GetMapping("/getAll")
 	public ResponseEntity<List<Jugador>> getAll() {
 		try {
-			List<Jugador> jugadores = service.getAllJugadors();
+			List<Jugador> jugadores = jugadorService.getAllJugadors();
 			return new ResponseEntity<>(jugadores, HttpStatus.FOUND);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -41,7 +42,7 @@ public class JugadorController {
 	public ResponseEntity<Jugador> getOne (@PathVariable("id") int id) {
 
 		try {
-			Optional<Jugador> jugador = service.getJugadorById(id);
+			Optional<Jugador> jugador = jugadorService.getJugadorById(id);
 			if (jugador.isPresent()) {
 				return new ResponseEntity<>(jugador.get(), HttpStatus.OK);
 			} else {
@@ -54,23 +55,14 @@ public class JugadorController {
 
 	//Crear jugador
 	@PostMapping("/addJugador")
-	public ResponseEntity<Jugador> createJugador(@RequestBody Jugador jugador) {
-
-		try {
-			service.saveJugador(jugador);
-			return new ResponseEntity<>(jugador, HttpStatus.CREATED);
-
-		} catch (Exception e) {
-
-			return new ResponseEntity<>(HttpStatus.CONFLICT);
-		}
-
+	public ResponseEntity<JugadorDto> createJugador(@RequestBody JugadorDto jugador) throws Exception {
+			return new ResponseEntity<>(jugadorService.saveJugador(jugador), HttpStatus.CREATED);
 	}
 
 	// PUT /players : modifica el nom del jugador
 	@PutMapping("/update/{id}")
-	public ResponseEntity<Jugador> updateJugador(@PathVariable("id") int id, @RequestBody Jugador jugador) {
-		return new ResponseEntity<>(service.updateJugador(id, jugador), HttpStatus.CREATED);
+	public ResponseEntity<JugadorDto> updateJugador(@PathVariable("id") int id, @RequestBody JugadorDto jugadorDto) {
+		return new ResponseEntity<>(jugadorService.updateJugador(id, jugadorDto), HttpStatus.CREATED);
 	}
 
 
@@ -79,24 +71,24 @@ public class JugadorController {
 	//GET /players/ranking: retorna el ranking de tots els jugadors/es del sistema.
 	@GetMapping("/ranking")
 	public ResponseEntity<TreeMap <String, Double>> getLlistatRankingMigJugadors(){
-		return new ResponseEntity<>(service.llistatRankingJugadors(), HttpStatus.OK);
+		return new ResponseEntity<>(jugadorService.llistatRankingJugadors(), HttpStatus.OK);
 	}
 	//GET /players/: retorna el percentatge mitjà d’èxits de tots els jugadors.
 	@GetMapping("/")
 	public ResponseEntity<Double> getPercentatgeMitja(){
-		double percentatgeExit= service.mitjaJugadors();
+		double percentatgeExit= jugadorService.mitjaJugadors();
 		return new ResponseEntity<>(percentatgeExit, HttpStatus.OK);
 	}
 
 	//GET /players/ranking/loser: retorna el jugador/a amb pitjor percentatge d’èxit.
 	@GetMapping("/ranking/loser")
-	public ResponseEntity<Jugador> getJugadorLoser(){
-		return new ResponseEntity<>(service.jugadorLoser(), HttpStatus.OK);
+	public ResponseEntity<JugadorDto> getJugadorLoser(){
+		return new ResponseEntity<>(jugadorService.jugadorLoser(), HttpStatus.OK);
 	}
 
 	//GET /players/ranking/loser: retorna el jugador/a amb millor percentatge d’èxit.
 	@GetMapping("/ranking/winner")
-	public ResponseEntity<Jugador> getJugadorBest(){
-		return new ResponseEntity<>(service.jugadorBest(), HttpStatus.OK);
+	public ResponseEntity<JugadorDto> getJugadorBest(){
+		return new ResponseEntity<>(jugadorService.jugadorBest(), HttpStatus.OK);
 	}
 }

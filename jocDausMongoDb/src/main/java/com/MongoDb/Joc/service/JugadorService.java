@@ -1,12 +1,15 @@
 package com.MongoDb.Joc.service;
 
+import java.time.LocalDate;
 import java.util.*;
 
+import com.MongoDb.Joc.Dto.JugadorDto;
 import com.MongoDb.Joc.Exception.AlreadyExist;
 import com.MongoDb.Joc.Model.Jugador;
 import com.MongoDb.Joc.Model.Tirada;
 import com.MongoDb.Joc.repository.JugadorRepository;
 import com.MongoDb.Joc.repository.TiradaRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +27,9 @@ public class JugadorService {
 
 	@Autowired
 	private SequenceGeneratorService generatorJugadorService;
+
+	@Autowired
+	private ModelMapper modelMapper;
 
 	//METODES CRUD
 
@@ -43,10 +49,12 @@ public class JugadorService {
 	}
 
 
-	public Jugador saveJugador(Jugador jugador) throws Exception {
+	public JugadorDto saveJugador(JugadorDto jugadorDto) throws Exception {
+		Jugador jugador = convertDTOAEntitat((jugadorDto));
 
 		if (jugador.getNom() == null || "".equals(jugador.getNom())) {
-			jugador.setNom("Anonim");
+			jugador.setNom("Anonim" + contador);
+			contador++;
 		}
 		if (jugadorRepository.existsByNom(jugador.getNom())) {
 			throw new Exception("Jugador amb nom: " + jugador.getNom() + " ja existeix");
@@ -56,21 +64,26 @@ public class JugadorService {
 			contador++;
 		}
 		jugador.setId(generatorJugadorService.getSequenceNumber(Jugador.SEQUENCE_NAME));
-		return jugadorRepository.save(jugador);
+		jugadorRepository.save(jugador);
+
+		return convertEntitatADto(jugador);
 	}
 
 
-	public Jugador updateJugador(int id, Jugador jugador) {
+	public JugadorDto updateJugador(int id, JugadorDto jugadorDto) {
 
-		if (jugadorRepository.existsByNom(jugador.getNom())) {
+		if (jugadorRepository.existsByNom(jugadorDto.getNom())) {
 			throw new AlreadyExist("El nom del jugador ja existeix");
 		}
+		Jugador jugador = convertDTOAEntitat(jugadorDto);
 
 		Optional<Jugador> userOptional = jugadorRepository.findById(id);
 		userOptional.get().setNom(jugador.getNom());
 
 		//Guardem al repository
-		return jugadorRepository.save(userOptional.get());
+		jugadorRepository.save(userOptional.get());
+
+		return convertEntitatADto(userOptional.get());
 
 	}
 
@@ -124,20 +137,31 @@ public class JugadorService {
 		return jugadors;
 	}
 
-
-	public Jugador jugadorLoser() {
-		List<Jugador> llistatJugadors  = jugadorRepository.findAll();
-		List<Jugador> jugadors  = getListJugadorsRanking(llistatJugadors);
+	//Retorna el pitjor jugador
+	public JugadorDto jugadorLoser() {
+		List<Jugador> llistatJugadors =jugadorRepository.findAll();
+		List<Jugador> jugadors = getListJugadorsRanking(llistatJugadors);
 		jugadors.sort(Comparator.comparing(Jugador::calculaPercentatgeExitJugador));
-		return jugadors .get(0);
+		return convertEntitatADto(jugadors.get(0));
 	}
 
-
-	public Jugador jugadorBest() {
-		List<Jugador> llistatJugadors  = jugadorRepository.findAll();
-		List<Jugador> jugadors  = getListJugadorsRanking(llistatJugadors);
-		jugadors.sort(Comparator.comparing(Jugador::calculaPercentatgeExitJugador).reversed());
-		return jugadors .get(0);
+	//Retorna el millor jugador
+	public JugadorDto jugadorBest() {
+		List<Jugador> llistatJugadors = jugadorRepository.findAll();
+		List<Jugador> jugadors = getListJugadorsRanking(llistatJugadors);
+		jugadors.sort(Comparator.comparing(Jugador::calculaPercentatgeExitJugador));
+		return convertEntitatADto (jugadors.get(jugadors.size() - 1));
 	}
 
+	//MODELMAPPERS
+
+	//Convertim DTO a entitat utilitzan el ModelMapper
+	public Jugador convertDTOAEntitat (JugadorDto jugadorDto){
+		return modelMapper.map(jugadorDto, Jugador.class);
+	}
+
+	//Convertim entitat a DTO utilitzan el ModelMapper
+	public JugadorDto convertEntitatADto (Jugador jugador){
+		return modelMapper.map(jugador, JugadorDto.class);
+	}
 }

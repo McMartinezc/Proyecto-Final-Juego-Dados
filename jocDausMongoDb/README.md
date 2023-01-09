@@ -46,7 +46,7 @@ GET /players/
 
 - Retorna el llistat de jugades per un jugador.
 ```
-GET /players/tiradesJugador/{id}
+GET /players//tiradesJugador/{id}
 ```
 
 - Retorna el ranking mig de tots els jugadors del sistema.

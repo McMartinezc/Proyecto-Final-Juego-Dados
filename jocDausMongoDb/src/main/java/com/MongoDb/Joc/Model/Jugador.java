@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.MongoDb.Joc.Exception.AlreadyExist;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
@@ -18,6 +19,7 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 @Getter
 @Setter
+@NoArgsConstructor
 
 @Document(collection = "jugador")
 public class Jugador {
@@ -43,15 +45,13 @@ public class Jugador {
 	@Transient
 	private double percentatge;
 
-	public Jugador() {
-		this.nom = "Anonim";
-	}
-
-	public Jugador(String nom, Date dataRegistre) {
+	public Jugador(int id, String nom, Date dataRegistre, List<Tirada> misTiradas, double percentatge) {
+		this.id = id;
 		this.nom = nom;
 		this.dataRegistre = dataRegistre;
+		this.misTiradas = misTiradas;
+		this.percentatge = percentatge;
 	}
-
 
 	//calcula el percentatge d'èxit del jugador
 

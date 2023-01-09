@@ -44,7 +44,7 @@ public class Tirada {
 	
 	public Tirada(int idjugador) {
 		this.dau1 = generarTirada();
-		this.dau1 = generarTirada();
+		this.dau2 = generarTirada();
 		this.guanya = resultatTirada();
 		this.idjugador = idjugador;
 	}
@@ -69,7 +69,7 @@ public class Tirada {
 	public boolean resultatTirada(){
 		boolean resultat;
 
-		if(this.dau1 + this.dau2 == 7){
+		if((this.dau1 + this.dau2) == 7){
 			resultat = true;
 		}else{
 			resultat = false;
