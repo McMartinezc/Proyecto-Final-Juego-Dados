@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface JugadorRepository extends MongoRepository<Jugador, Integer> {
-	Jugador findByNom(String nom);
+
 	boolean existsByNom(String nom);
 	
 }
