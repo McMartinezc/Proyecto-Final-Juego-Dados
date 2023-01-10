@@ -81,10 +81,5 @@ FASE 3
 
 # Recursos
 
-https://howtodoinjava.com/hibernate/hibernate-one-to-many-mapping/
 
-https://attacomsian.com/blog/spring-data-jpa-one-to-many-mapping
-
-https://www.bezkoder.com/jpa-one-to-many/
-
-https://stackoverflow.com/questions/63985536/generate-a-timestamp-in-a-column-while-inserting-in-spring-hibernate-and-postgr
+https://www.javainuse.com/spring/boot-jwt
