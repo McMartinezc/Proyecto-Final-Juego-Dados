@@ -67,11 +67,6 @@ public class User {
         int totalGuanyat =0;
         int tamanyLlista = misTiradas.size();
 
-        //Comprovem que la llista no està buida
-        if (misTiradas.isEmpty()){
-            throw new AlreadyExist("Jugador no té tirades");
-        }
-
         if (misTiradas != null && tamanyLlista > 0){
             for (Tirada tirada: misTiradas){
                 if (tirada.isGuanya()){
