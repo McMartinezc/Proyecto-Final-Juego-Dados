@@ -26,11 +26,6 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    //Crear jugador
-    @PostMapping("/addJugador")
-    public ResponseEntity<UserDto> addJugador (@RequestBody UserDto userDto){
-        return new ResponseEntity<>(userService.crearUser(userDto), HttpStatus.CREATED);
-    }
 
     //Buscar un jugador
     @GetMapping("getOne/{id}")
@@ -40,7 +35,7 @@ public class UserController {
 
     //Update jugador
     @PutMapping("/update/{id}")
-    public ResponseEntity<UserDto> updateJugador (@PathVariable("id") Long id, @RequestBody UserDto userDto){
+    public ResponseEntity<UserDto> updateJugador (@PathVariable Long id, @RequestBody UserDto userDto){
         
         return new ResponseEntity<>(userService.updateUser(id, userDto), HttpStatus.CREATED);
     }

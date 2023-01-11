@@ -16,9 +16,6 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
 
-    //Variable per poder tenir anonims repetits
-    private static int contador = 1;
-
     private final UserRepository userRepository;
     private final TiradaRepository tiradaRepository;
     @Autowired
@@ -30,33 +27,6 @@ public class UserService {
     }
 
     //METODES CRUD
-
-    //Crear jugador
-    public UserDto crearUser (UserDto userDto){
-
-        //Convertim dto a entitat
-        User user = convertDTOAEntitat(userDto);
-
-        //Verifiquem condiciones si el nom és null o és buit guardem com anonim
-        if(user.getUsername()== null || "".equals(user.getUsername())){
-            user.setUsername("Anonim"+contador);
-            contador++;
-        }
-       //Verifiquem que nom no existeixi a al base de dades
-       if(userRepository.existsByUsername(user.getUsername())){
-           throw new AlreadyExist("Aquest nom ja existeix.");
-      }
-       //En el cas que sigui anònim guardem
-       if(user.getUsername().equalsIgnoreCase("anonim")){
-           user.setUsername(user.getUsername() +contador);
-           contador++;
-       }
-        userRepository.save(user);
-
-        //Convertirm entitat a dto per enviar al usuari
-        return convertEntitatADto(user);
-
-    }
 
     //Buscar un jugador
     public UserDto getOne (Long id){
@@ -92,6 +62,7 @@ public class UserService {
 
         //Retornem un dto
         return convertEntitatADto(userOptional.get());
+
     }
     //Mostra tots els jugadors
     public List<UserDto> getAllUsers() {
@@ -136,7 +107,8 @@ public class UserService {
                     String nomJugador = jugador.getUsername();
                     Double percentatge = jugador.calculaPercentatgeExitJugador();
                     llistatPercentatgeJugadors.put(nomJugador, percentatge);
-                }else {
+                }
+                else {
                     llistatPercentatgeJugadors.put(jugador.getUsername(), jugador.getPercentatge());
                 }
             }
@@ -173,7 +145,7 @@ public class UserService {
     }
     //Retorna el pitjor jugador
     public UserDto jugadorLoser(){
-        List<User> llistatJugadors =userRepository.findAll();
+        List<User> llistatJugadors = userRepository.findAll();
         List<User> jugadors = getListJugadorsRanking(llistatJugadors);
         jugadors.sort(Comparator.comparing(User::calculaPercentatgeExitJugador));
         return convertEntitatADto(jugadors.get(0));

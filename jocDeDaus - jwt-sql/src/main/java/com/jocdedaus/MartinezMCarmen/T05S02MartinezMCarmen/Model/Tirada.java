@@ -1,10 +1,7 @@
 package com.jocdedaus.MartinezMCarmen.T05S02MartinezMCarmen.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -12,10 +9,10 @@ import javax.persistence.*;
 @Setter
 @ToString
 @Data
+@NoArgsConstructor
 
 @Entity
 @Table(name= "tirada")
-
 public class Tirada {
 
     @Id
@@ -35,9 +32,6 @@ public class Tirada {
     private User user;
 
     //Constructors
-    public Tirada() {
-    }
-
     public Tirada(int idTirada, int dau1, int dau2, boolean guanya, User user) {
         this.idTirada = idTirada;
         this.dau1 = dau1;

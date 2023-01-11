@@ -1,10 +1,6 @@
 package com.jocdedaus.MartinezMCarmen.T05S02MartinezMCarmen.Model;
 
-import com.jocdedaus.MartinezMCarmen.T05S02MartinezMCarmen.Exception.AlreadyExist;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 
@@ -19,7 +15,6 @@ import java.util.List;
 @ToString
 @Data
 
-
 @Entity
 @Table(name="jugador")
 public class User {
@@ -33,7 +28,6 @@ public class User {
     private String username;
     //jwt
     private String password;
-
     @Column(name="data_registre")
 
     //Anotación que crea la fecha
@@ -47,7 +41,7 @@ public class User {
 
     //Constructors
     public User(){
-        this.username="Anonim";
+        this.username=username;
     }
     public User(Long id, String username, LocalDate dataRegistre) {
         this.id = id;
@@ -59,7 +53,6 @@ public class User {
     public User(String username, String password) {
         this.username = username;
         this.password = password;
-
     }
 
     //Càlcul de percentatge d'èxit del jugador
@@ -67,6 +60,7 @@ public class User {
         int totalGuanyat =0;
         int tamanyLlista = misTiradas.size();
 
+        //Comprovem que la llista no està buida
         if (misTiradas != null && tamanyLlista > 0){
             for (Tirada tirada: misTiradas){
                 if (tirada.isGuanya()){
