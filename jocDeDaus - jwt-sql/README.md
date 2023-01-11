@@ -79,10 +79,12 @@ FASE 3
 
 # Recursos
 
-https://howtodoinjava.com/hibernate/hibernate-one-to-many-mapping/
+https://devwithus.com/spring-boot-rest-api-security-jwt/
 
-https://attacomsian.com/blog/spring-data-jpa-one-to-many-mapping
+https://www.baeldung.com/spring-security-method-security
 
-https://www.bezkoder.com/jpa-one-to-many/
+https://www.techgeeknext.com/spring/spring-boot-security-token-authentication-jwt-mysql
 
-https://stackoverflow.com/questions/63985536/generate-a-timestamp-in-a-column-while-inserting-in-spring-hibernate-and-postgr
+https://www.adictosaltrabajo.com/2020/05/21/introduccion-a-spring-security/
+
+-OpenBootCamp
