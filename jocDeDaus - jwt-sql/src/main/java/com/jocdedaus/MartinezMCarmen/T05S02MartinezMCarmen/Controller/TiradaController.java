@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/players/")
@@ -20,26 +19,26 @@ public class TiradaController {
     //JOC
     //Jugador tira els daus
     @PostMapping("/tirada/{id}")
-    public ResponseEntity <Tirada> jugadorTiraDaus (@PathVariable("id") Long id){
+    public ResponseEntity<Tirada> jugadorTiraDaus(@PathVariable("id") Long id) {
 
         Tirada tirada = tiradaService.jugadorTiraDados(id);
 
-        if (tirada == null){
+        if (tirada == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new  ResponseEntity<>(tirada, HttpStatus.OK);
+        return new ResponseEntity<>(tirada, HttpStatus.OK);
     }
 
     //RETORNA LLISTAT
 
     //Retorna el llistat de jugades d'un jugador
     @GetMapping("/tiradesJugador/{id}")
-    public ResponseEntity<List<Tirada>> mostrarTiradesJugador (@PathVariable("id") Long id){
+    public ResponseEntity<List<Tirada>> mostrarTiradesJugador(@PathVariable("id") Long id) {
 
-       if (tiradaService.getListTiradesJugador(id) == null){
-           return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-       }
-       return  ResponseEntity.ok(tiradaService.getListTiradesJugador(id));
+        if (tiradaService.getListTiradesJugador(id) == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(tiradaService.getListTiradesJugador(id));
     }
 
 

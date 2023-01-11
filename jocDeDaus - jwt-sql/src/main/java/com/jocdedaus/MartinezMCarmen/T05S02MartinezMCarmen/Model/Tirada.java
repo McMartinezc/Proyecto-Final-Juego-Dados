@@ -12,23 +12,23 @@ import javax.persistence.*;
 @NoArgsConstructor
 
 @Entity
-@Table(name= "tirada")
+@Table(name = "tirada")
 public class Tirada {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idTirada;
-    @Column(name="dau1")
+    @Column(name = "dau1")
     private int dau1;
-    @Column(name="dau2")
+    @Column(name = "dau2")
     private int dau2;
-    @Column(name="Partida_Guanyada")
+    @Column(name = "Partida_Guanyada")
     private boolean guanya;
 
     //Relació molts a un (moltes tirades, només un jugador)
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name="id_jugador")
+    @JoinColumn(name = "id_jugador")
     private User user;
 
     //Constructors
@@ -40,7 +40,7 @@ public class Tirada {
         this.user = user;
     }
 
-    public Tirada (User user) {
+    public Tirada(User user) {
         this.dau1 = generarTirada();
         this.dau2 = generarTirada();
         this.guanya = resultatTirada();
@@ -48,18 +48,18 @@ public class Tirada {
     }
 
     //Valor random dels daus
-    public int generarTirada(){
-        int random = (int) Math.floor(Math.random()* 6 + 1); //Metode que genera un número random del 1 al 6
+    public int generarTirada() {
+        int random = (int) Math.floor(Math.random() * 6 + 1); //Metode que genera un número random del 1 al 6
         return random;
     }
 
     //Metode que comprova el resultat sigui 7 guanya, dona true si ha guanyat o false si ha perdut
-    public boolean resultatTirada(){
+    public boolean resultatTirada() {
         boolean resultat;
 
-        if(this.dau1 + this.dau2 == 7){
+        if (this.dau1 + this.dau2 == 7) {
             resultat = true;
-        }else{
+        } else {
             resultat = false;
         }
         return resultat;

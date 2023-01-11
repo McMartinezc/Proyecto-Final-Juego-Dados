@@ -1,7 +1,6 @@
 package com.jocdedaus.MartinezMCarmen.T05S02MartinezMCarmen.Segurity.Controllers;
 
 import com.jocdedaus.MartinezMCarmen.T05S02MartinezMCarmen.DTO.UserDto;
-import com.jocdedaus.MartinezMCarmen.T05S02MartinezMCarmen.Exception.AlreadyExist;
 import com.jocdedaus.MartinezMCarmen.T05S02MartinezMCarmen.Model.User;
 import com.jocdedaus.MartinezMCarmen.T05S02MartinezMCarmen.Repository.UserRepository;
 import com.jocdedaus.MartinezMCarmen.T05S02MartinezMCarmen.Segurity.jwt.JwtUtils;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 
 
 @RestController
@@ -56,16 +54,17 @@ public class AuthController {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Username ja existeix!"));
         }
-       // if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-         //   return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
-       // }
+        // Si tinguessim email
+        // if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+        //   return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
+        // }
         //Verifiquem si el nom és null o és buit envia un missatge ja que per seguretat ha de tenir un nom d'usuari
-        if(signUpRequest.getUsername()== null || "".equals(signUpRequest.getUsername())){
+        if (signUpRequest.getUsername() == null || "".equals(signUpRequest.getUsername())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Has d'introduïr un nom!"));
         }
 
         // Create new user's account
-        User user = new User(signUpRequest.getUsername(),encoder.encode(signUpRequest.getPassword()));
+        User user = new User(signUpRequest.getUsername(), encoder.encode(signUpRequest.getPassword()));
         userRepository.save(user);
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 

@@ -16,19 +16,19 @@ import java.util.List;
 @Data
 
 @Entity
-@Table(name="jugador")
+@Table(name = "jugador")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name ="id_jugador")
+    @Column(name = "id_jugador")
     private Long id;
 
-    @Column(name ="nom_jugador")
+    @Column(name = "nom_jugador")
     private String username;
     //jwt
     private String password;
-    @Column(name="data_registre")
+    @Column(name = "data_registre")
 
     //Anotación que crea la fecha
     @CreationTimestamp
@@ -40,9 +40,10 @@ public class User {
     private double percentatge;
 
     //Constructors
-    public User(){
-        this.username=username;
+    public User() {
+        this.username = username;
     }
+
     public User(Long id, String username, LocalDate dataRegistre) {
         this.id = id;
         this.username = username;
@@ -56,26 +57,26 @@ public class User {
     }
 
     //Càlcul de percentatge d'èxit del jugador
-    public double calculaPercentatgeExitJugador(){
-        int totalGuanyat =0;
+    public double calculaPercentatgeExitJugador() {
+        int totalGuanyat = 0;
         int tamanyLlista = misTiradas.size();
 
         //Comprovem que la llista no està buida
-        if (misTiradas != null && tamanyLlista > 0){
-            for (Tirada tirada: misTiradas){
-                if (tirada.isGuanya()){
-                    totalGuanyat ++;
+        if (misTiradas != null && tamanyLlista > 0) {
+            for (Tirada tirada : misTiradas) {
+                if (tirada.isGuanya()) {
+                    totalGuanyat++;
                 }
             }
-            percentatge = (totalGuanyat *100) / tamanyLlista;
+            percentatge = (totalGuanyat * 100) / tamanyLlista;
         }
         return percentatge;
     }
 
     //Guardem la tirada del jugador a la llista de les seves tirades
-    public void addTirada (Tirada miTirada){
+    public void addTirada(Tirada miTirada) {
 
-        if (misTiradas ==null){
+        if (misTiradas == null) {
             misTiradas = new ArrayList<Tirada>();
         }
         misTiradas.add(miTirada);

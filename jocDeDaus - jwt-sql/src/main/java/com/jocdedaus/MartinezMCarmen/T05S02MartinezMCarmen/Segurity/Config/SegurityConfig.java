@@ -23,7 +23,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity // permite a Spring aplicar esta configuracion a la configuraicon de seguridad global
-public class SegurityConfig  extends WebSecurityConfigurerAdapter {
+public class SegurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
@@ -47,8 +47,7 @@ public class SegurityConfig  extends WebSecurityConfigurerAdapter {
 
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource()
-    {
+    CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         // configuration.setAllowedOrigins(List.of("http://localhost:4200", "https://angular-springboot-*.vercel.app"));
         configuration.setAllowedOriginPatterns(List.of("http://localhost:4200", "https://angular-springboot1-beta.vercel.app"));
@@ -63,6 +62,7 @@ public class SegurityConfig  extends WebSecurityConfigurerAdapter {
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // Cross-Site Request Forgery CSRF
@@ -73,7 +73,7 @@ public class SegurityConfig  extends WebSecurityConfigurerAdapter {
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeRequests().antMatchers("/api/auth/**","/players/getAll","/players/","/players/ranking/**").permitAll()
+                .authorizeRequests().antMatchers("/api/auth/**", "/players/getAll", "/players/", "/players/ranking/**").permitAll()
                 .antMatchers("/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**").permitAll()
                 .anyRequest().authenticated();
 

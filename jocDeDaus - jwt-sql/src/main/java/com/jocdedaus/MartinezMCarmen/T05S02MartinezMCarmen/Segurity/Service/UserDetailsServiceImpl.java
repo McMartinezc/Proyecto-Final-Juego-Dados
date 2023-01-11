@@ -14,15 +14,15 @@ import java.util.ArrayList;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-  @Autowired
-  private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    User user = userRepository.findByUsername(username)
-        .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
 
-    return new org.springframework.security.core.userdetails.User(
-            user.getUsername(),user.getPassword(),new ArrayList<>());
-  }
+        return new org.springframework.security.core.userdetails.User(
+                user.getUsername(), user.getPassword(), new ArrayList<>());
+    }
 
 }
