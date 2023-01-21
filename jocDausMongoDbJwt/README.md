@@ -18,11 +18,7 @@
 ## Notes
 Has de tindre en compte els següents detalls de construcció:
 
-- Crea un jugador
-```
-POST /players/addJugador
-```
- 
+
 - Modifica el nom del jugador
 ```
 PUT /players/update/{id}
@@ -64,7 +60,14 @@ GET /players/ranking/loser
 ```
 GET /players/ranking/winner
 ```
-
+- Registrem un jugador
+```
+POST /api/auth/signup
+```
+- Login un jugador
+```
+POST /api/auth/signin
+```
 
 ## Fases
 FASE 1  
@@ -73,8 +76,13 @@ FASE 1
 FASE 2  
 • **Canvia la configuració** i utilitza MongoDB per persistir les dades
 
+FASE 3
+• **Afegeix seguretat**: inclou autenticació per JWT en  tots els accessos a les URL's del microservei. 
+
 ##Recursos
 
 https://stackoverflow.com/questions/8384029/auto-increment-in-mongodb-to-store-sequence-of-unique-user-id
 
 https://java.hotexamples.com/es/examples/org.springframework.data.mongodb.core/MongoOperations/-/java-mongooperations-class-examples.html
+
+OpenBoot Camp per la creació de la part de JWT.
