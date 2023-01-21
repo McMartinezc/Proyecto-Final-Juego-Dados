@@ -18,6 +18,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -25,60 +26,66 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Document(collection = "jugador")
 public class Jugador {
 
-	@Id
-	private int id;
+    @Id
+    private int id;
+    //variable per canviar el id generat per mongo per un número autoincremental
+    @Transient
+    public static final String SEQUENCE_NAME = "jugador_sequence";
+    @Field(name = "username")
+    private String username;
+    //jwt
+    private String password;
+    @Field(name = "data_registre")
+    @CreatedDate
+    private Date dataRegistre;
+    @DBRef(lazy = true)
+    private List<Tirada> misTiradas;
+    @JsonIgnore
+    @Transient
+    private double percentatge;
 
-	//variable per canviar el id generat per mongo per un número autoincremental
-	@Transient
-	public static final String SEQUENCE_NAME = "jugador_sequence";
+    public Jugador(String username) {
+        this.username = username;
+    }
 
-	@Field(name = "nom")
-	private String nom;
+    public Jugador(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 
-	@Field(name = "data_registre")
-	@CreatedDate
-	private Date dataRegistre;
+    public Jugador(int id, String username, Date dataRegistre, List<Tirada> misTiradas, double percentatge) {
+        this.id = id;
+        this.username = username;
+        this.dataRegistre = dataRegistre;
+        this.misTiradas = misTiradas;
+        this.percentatge = percentatge;
+    }
 
-	@DBRef(lazy = true)
-	private List<Tirada> misTiradas;
+    //calcula el percentatge d'èxit del jugador
 
-	@JsonIgnore
-	@Transient
-	private double percentatge;
+    public double calculaPercentatgeExitJugador() {
+        int totalGuanyat = 0;
+        int tamanyLlista = misTiradas.size();
 
-	public Jugador(int id, String nom, Date dataRegistre, List<Tirada> misTiradas, double percentatge) {
-		this.id = id;
-		this.nom = nom;
-		this.dataRegistre = dataRegistre;
-		this.misTiradas = misTiradas;
-		this.percentatge = percentatge;
-	}
+        if (misTiradas != null && tamanyLlista > 0) {
+            for (Tirada tirada : misTiradas) {
+                if (tirada.isGuanya()) {
+                    totalGuanyat++;
+                }
+            }
+            percentatge = (totalGuanyat * 100) / tamanyLlista;
+        }
+        return percentatge;
+    }
 
-	//calcula el percentatge d'èxit del jugador
+    //Guardem la tirada del jugador a la llista de les seves tirades
+    public void addTirada(Tirada miTirada) {
 
-	public double calculaPercentatgeExitJugador(){
-		int totalGuanyat =0;
-		int tamanyLlista = misTiradas.size();
-
-		if (misTiradas != null && tamanyLlista > 0){
-			for (Tirada tirada: misTiradas){
-				if (tirada.isGuanya()){
-					totalGuanyat ++;
-				}
-			}
-			percentatge = (totalGuanyat *100) / tamanyLlista;
-		}
-		return percentatge;
-	}
-
-	//Guardem la tirada del jugador a la llista de les seves tirades
-	public void addTirada (Tirada miTirada){
-
-		if (misTiradas ==null){
-			misTiradas = new ArrayList<Tirada>();
-		}
-		misTiradas.add(miTirada);
-	}
+        if (misTiradas == null) {
+            misTiradas = new ArrayList<Tirada>();
+        }
+        misTiradas.add(miTirada);
+    }
 
 
 }

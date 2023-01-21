@@ -1,6 +1,5 @@
 package com.MongoDb.Joc.service;
 
-import java.time.LocalDate;
 import java.util.*;
 
 import com.MongoDb.Joc.Dto.JugadorDto;
@@ -16,153 +15,126 @@ import org.springframework.stereotype.Service;
 @Service
 public class JugadorService {
 
-	//variable per no tenir noms anónims repetits
-	private static int contador = 1; 
-	
-	@Autowired
-	private JugadorRepository jugadorRepository;
+    //variable per no tenir noms anónims repetits
+    private static int contador = 1;
 
-	@Autowired
-	private TiradaRepository tiradaRepository;
+    @Autowired
+    private JugadorRepository jugadorRepository;
 
-	@Autowired
-	private SequenceGeneratorService generatorJugadorService;
+    @Autowired
+    private TiradaRepository tiradaRepository;
 
-	@Autowired
-	private ModelMapper modelMapper;
+    @Autowired
+    private SequenceGeneratorService generatorJugadorService;
 
-	//METODES CRUD
+    @Autowired
+    private ModelMapper modelMapper;
 
-	public List<Jugador> getAllJugadors() {
-		List<Jugador> llista = jugadorRepository.findAll();
-		return llista;
-	}
+    //METODES CRUD
 
-
-	public Optional<Jugador> getJugadorById(int id) {
-		return jugadorRepository.findById(id);
-	}
+    public List<Jugador> getAllJugadors() {
+        List<Jugador> llista = jugadorRepository.findAll();
+        return llista;
+    }
 
 
-	public boolean existeNomJugador(Jugador jugador) {
-		return jugadorRepository.existsByNom(jugador.getNom());
-	}
+    public Optional<Jugador> getJugadorById(int id) {
+        return jugadorRepository.findById(id);
+    }
 
 
-	public JugadorDto saveJugador(JugadorDto jugadorDto) throws Exception {
-		Jugador jugador = convertDTOAEntitat((jugadorDto));
+    public JugadorDto updateJugador(int id, JugadorDto jugadorDto) {
 
-		if (jugador.getNom() == null || "".equals(jugador.getNom())) {
-			jugador.setNom("Anonim" + contador);
-			contador++;
-		}
-		if (jugadorRepository.existsByNom(jugador.getNom())) {
-			throw new Exception("Jugador amb nom: " + jugador.getNom() + " ja existeix");
-		}
-		if (jugador.getNom().equalsIgnoreCase("anonim")) {
-			jugador.setNom(jugador.getNom() + contador);
-			contador++;
-		}
-		jugador.setDataRegistre(new Date());
-		jugador.setId(generatorJugadorService.getSequenceNumber(Jugador.SEQUENCE_NAME));
-		jugadorRepository.save(jugador);
+        if (jugadorRepository.existsByUsername(jugadorDto.getUsername())) {
+            throw new AlreadyExist("El nom del jugador ja existeix");
+        }
+        Jugador jugador = convertDTOAEntitat(jugadorDto);
 
-		return convertEntitatADto(jugador);
-	}
+        Optional<Jugador> userOptional = jugadorRepository.findById(id);
+        userOptional.get().setUsername(jugador.getUsername());
 
+        //Guardem al repository
+        jugadorRepository.save(userOptional.get());
 
-	public JugadorDto updateJugador(int id, JugadorDto jugadorDto) {
+        return convertEntitatADto(userOptional.get());
 
-		if (jugadorRepository.existsByNom(jugadorDto.getNom())) {
-			throw new AlreadyExist("El nom del jugador ja existeix");
-		}
-		Jugador jugador = convertDTOAEntitat(jugadorDto);
+    }
 
-		Optional<Jugador> userOptional = jugadorRepository.findById(id);
-		userOptional.get().setNom(jugador.getNom());
+    //METODES PERCENTATGES JUGADORS
 
-		//Guardem al repository
-		jugadorRepository.save(userOptional.get());
+    //Retorna el llistat de jugadors amb el seu percentatge d'exits per mostrar per pantalla ordenat per orde alfabetic(TreeMap)
+    public TreeMap<String, Double> llistatRankingJugadors() {
 
-		return convertEntitatADto(userOptional.get());
+        //Creem llistat de tots el jugadors del repository
+        List<Jugador> llistatJugadors = jugadorRepository.findAll();
 
-	}
+        //Creem un Map per guardar nom de jugador i percentatge
+        TreeMap<String, Double> llistatPercentatgeJugadors = new TreeMap<>();
 
-	//METODES PERCENTATGES JUGADORS
+        if (!llistatJugadors.isEmpty()) {
+            List<Tirada> tiradaJugadorActual;
 
-	//Retorna el llistat de jugadors amb el seu percentatge d'exits per mostrar per pantalla ordenat per orde alfabetic(TreeMap)
-	public TreeMap<String, Double> llistatRankingJugadors(){
+            for (Jugador jugador : llistatJugadors) {
+                tiradaJugadorActual = tiradaRepository.getTiradasByIdjugador(jugador.getId());
 
-		//Creem llistat de tots el jugadors del repository
-		List<Jugador> llistatJugadors = jugadorRepository.findAll();
+                if (!tiradaJugadorActual.isEmpty()) {
+                    String nomJugador = jugador.getUsername();
+                    Double percentatge = jugador.calculaPercentatgeExitJugador();
+                    llistatPercentatgeJugadors.put(nomJugador, percentatge);
+                } else {
+                    llistatPercentatgeJugadors.put(jugador.getUsername(), jugador.getPercentatge());
+                }
+            }
+        }
+        return llistatPercentatgeJugadors;
+    }
 
-		//Creem un Map per guardar nom de jugador i percentatge
-		TreeMap<String, Double> llistatPercentatgeJugadors = new TreeMap<>();
+    //Calcula la mitja del jugadors
+    public double mitjaJugadors() {
+        List<Jugador> llistatJugadors = jugadorRepository.findAll();
+        double mitja = llistatJugadors.stream().mapToDouble(Jugador::calculaPercentatgeExitJugador).average().orElse(0.0);
+        return Math.round(mitja * 100.0) / 100.0;
+    }
 
-		if(!llistatJugadors.isEmpty()){
-			List<Tirada> tiradaJugadorActual;
+    //Llista de tots els jugadors amb el seu percentatge, per poder buscar millor i pitjor jugador
+    public List<Jugador> getListJugadorsRanking(List<Jugador> llistaJugadors) {
+        List<Jugador> jugadors = new ArrayList<>();
+        double percentatge;
 
-			for(Jugador jugador : llistatJugadors){
-				tiradaJugadorActual = tiradaRepository.getTiradasByIdjugador(jugador.getId());
+        for (Jugador user : llistaJugadors) {
+            percentatge = user.calculaPercentatgeExitJugador();
+            user.setPercentatge(percentatge);
+            jugadors.add(user);
+            jugadorRepository.save(user);
+        }
+        return jugadors;
+    }
 
-				if(!tiradaJugadorActual.isEmpty()){
-					String nomJugador = jugador.getNom();
-					Double percentatge = jugador.calculaPercentatgeExitJugador();
-					llistatPercentatgeJugadors.put(nomJugador, percentatge);
-				}else {
-					llistatPercentatgeJugadors.put(jugador.getNom(), jugador.getPercentatge());
-				}
-			}
-		}
-		return llistatPercentatgeJugadors;
-	}
+    //Retorna el pitjor jugador
+    public JugadorDto jugadorLoser() {
+        List<Jugador> llistatJugadors = jugadorRepository.findAll();
+        List<Jugador> jugadors = getListJugadorsRanking(llistatJugadors);
+        jugadors.sort(Comparator.comparing(Jugador::calculaPercentatgeExitJugador));
+        return convertEntitatADto(jugadors.get(0));
+    }
 
-	//Calcula la mitja del jugadors
-	public double mitjaJugadors(){
-		List<Jugador> llistatJugadors = jugadorRepository.findAll();
-		double mitja = llistatJugadors.stream().mapToDouble(Jugador::calculaPercentatgeExitJugador).average().orElse(0.0);
-		return Math.round(mitja *100.0)/100.0;
-	}
+    //Retorna el millor jugador
+    public JugadorDto jugadorBest() {
+        List<Jugador> llistatJugadors = jugadorRepository.findAll();
+        List<Jugador> jugadors = getListJugadorsRanking(llistatJugadors);
+        jugadors.sort(Comparator.comparing(Jugador::calculaPercentatgeExitJugador));
+        return convertEntitatADto(jugadors.get(jugadors.size() - 1));
+    }
 
-	//Llista de tots els jugadors amb el seu percentatge, per poder buscar millor i pitjor jugador
-	public List<Jugador> getListJugadorsRanking (List<Jugador>llistaJugadors){
-		List<Jugador> jugadors = new ArrayList<>();
-		double percentatge;
+    //MODELMAPPERS
 
-		for(Jugador user: llistaJugadors){
-			percentatge = user.calculaPercentatgeExitJugador();
-			user.setPercentatge(percentatge);
-			jugadors.add(user);
-			jugadorRepository.save(user);
-		}
-		return jugadors;
-	}
+    //Convertim DTO a entitat utilitzan el ModelMapper
+    public Jugador convertDTOAEntitat(JugadorDto jugadorDto) {
+        return modelMapper.map(jugadorDto, Jugador.class);
+    }
 
-	//Retorna el pitjor jugador
-	public JugadorDto jugadorLoser() {
-		List<Jugador> llistatJugadors =jugadorRepository.findAll();
-		List<Jugador> jugadors = getListJugadorsRanking(llistatJugadors);
-		jugadors.sort(Comparator.comparing(Jugador::calculaPercentatgeExitJugador));
-		return convertEntitatADto(jugadors.get(0));
-	}
-
-	//Retorna el millor jugador
-	public JugadorDto jugadorBest() {
-		List<Jugador> llistatJugadors = jugadorRepository.findAll();
-		List<Jugador> jugadors = getListJugadorsRanking(llistatJugadors);
-		jugadors.sort(Comparator.comparing(Jugador::calculaPercentatgeExitJugador));
-		return convertEntitatADto (jugadors.get(jugadors.size() - 1));
-	}
-
-	//MODELMAPPERS
-
-	//Convertim DTO a entitat utilitzan el ModelMapper
-	public Jugador convertDTOAEntitat (JugadorDto jugadorDto){
-		return modelMapper.map(jugadorDto, Jugador.class);
-	}
-
-	//Convertim entitat a DTO utilitzan el ModelMapper
-	public JugadorDto convertEntitatADto (Jugador jugador){
-		return modelMapper.map(jugador, JugadorDto.class);
-	}
+    //Convertim entitat a DTO utilitzan el ModelMapper
+    public JugadorDto convertEntitatADto(Jugador jugador) {
+        return modelMapper.map(jugador, JugadorDto.class);
+    }
 }

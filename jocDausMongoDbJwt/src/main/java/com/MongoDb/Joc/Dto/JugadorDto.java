@@ -18,13 +18,10 @@ public class JugadorDto {
     private int id;
     //variable per canviar el id generat per mongo per un número autoincremental
     public static final String SEQUENCE_NAME = "jugador_sequence";
-
-    private String nom;
-
+    private String username;
+    private String password;
     private Date dataRegistre;
-
     private List<Tirada> misTiradas;
-
     private double percentatge;
 
 
