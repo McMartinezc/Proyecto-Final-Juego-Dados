@@ -28,7 +28,7 @@ public class Tirada {
     //Relació molts a un (moltes tirades, només un jugador)
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "id_jugador")
+    @JoinColumn(name = "id_user")
     private User user;
 
     //Constructors
