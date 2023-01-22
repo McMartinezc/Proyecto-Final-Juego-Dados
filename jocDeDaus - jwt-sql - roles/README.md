@@ -18,12 +18,12 @@
 Has de tindre en compte els següents detalls de construcció:
 - Registre un jugador
 ```
-POST /api/auth/signup
+POST /auth/signup
 ```
 
 - Autentifica un jugador
 ```
-POST /api/auth/signin
+POST /auth/signin
 ```
 
 - Modifica el nom del jugador
