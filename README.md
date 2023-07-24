@@ -22,4 +22,3 @@ Este proyecto consiste en el desarrollo de una API que permita jugar al "juego d
 - Fase 2: Cambiar la persistencia a MongoDB para almacenar los datos.
 - Fase 3: Agregar seguridad a la API mediante autenticación JWT en todas las rutas de acceso.
 
-El proyecto se diseñará siguiendo los principales patrones de diseño para garantizar una arquitectura robusta y escalable. Cada fase del desarrollo se implementará de forma incremental, y se realizarán pruebas exhaustivas para asegurar su correcto funcionamiento. Además, se seguirán buenas prácticas de programación y se documentará adecuadamente el código para facilitar la colaboración y el mantenimiento a lo largo del tiempo.
